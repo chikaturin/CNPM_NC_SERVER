@@ -9,7 +9,6 @@ const register = async (req, res) => {
     const { NameCus, NumberPhone, IDCard, TypeCard, Image } = req.body;
     const _id = IDCard;
 
-    // Mã hóa mật khẩu
     const hashedPassword = await bcrypt.hash(IDCard, 10);
 
     const account = await CustomerDB.create({
@@ -21,9 +20,10 @@ const register = async (req, res) => {
       Image,
     });
 
-    await account.save();
-
-    res.status(200).json({ message: "Account created successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Account created successfully",
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
