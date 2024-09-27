@@ -12,10 +12,7 @@ const getVehicleByCus = async (req, res) => {
     const desiredDate = new Date(Desired_Date);
 
     const contracts = await ContractDB.find({
-      $and: [
-        { Pickup_Date: { $lte: desiredDate } },
-        { Return_Date: { $gte: desiredDate } },
-      ],
+      Return_Date: { $gte: desiredDate },
     });
 
     const reservations = await ReservationDB.find({
