@@ -15,7 +15,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.json({ status: "Welcome to Voucher Management System" });
+  res.json({ status: "Welcome to Rental 4 U" });
 });
 
 app.use("/api", require("./Router/AccountRouter.js"));
