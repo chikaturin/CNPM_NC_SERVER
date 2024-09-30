@@ -20,5 +20,6 @@ router.get("/DetailAccount/:_id", DetailAccount);
 router.get("/getaccount", GetAccountByAdmin);
 router.post("/registeradmin", registerAdmin);
 router.put("/updateaccount/:_id", UpdateAccount);
+router.get("/user", checktokken);
 
 module.exports = router;
