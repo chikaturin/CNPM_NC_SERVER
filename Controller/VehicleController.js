@@ -62,13 +62,21 @@ const deleteVehicle = async (req, res) => {
         .status(400)
         .json({ message: "Vehicle is not available, so you can not delete" });
     }
-    await vehicle.deleteOne();
     if (!vehicle) {
       return res
         .status(404)
         .json({ message: "Vehicle not found to update state" });
     }
-    res.status(200).json("delete completed");
+    await vehicle.findOneAndUpdate(
+      {
+        _id,
+      },
+      {
+        State: "Unavailable",
+      },
+      { new: true }
+    );
+    res.status(200).json({ message: "Vehicle deleted successfully" });
   } catch (e) {
     res.status(500).json({ message: error.message });
   }

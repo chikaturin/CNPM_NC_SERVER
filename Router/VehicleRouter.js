@@ -15,7 +15,7 @@ router.post("/createVehicle", createVehicle);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
 router.get("/getVehicleById/:_id", getVehicleById);
 router.put("/updateVehicle/:_id", updateVehicle);
-router.delete("/deleteVehicle/:_id", deleteVehicle);
+router.get("/deleteVehicle/:_id", deleteVehicle);
 router.post("/Sort_Vehicle", Sort_Vehicle);
 router.post("/updateState/:_id", updateState);
 
