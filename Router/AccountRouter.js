@@ -8,6 +8,7 @@ const {
   GetAccountByAdmin,
   UpdateAccount,
   GetAccountByCus,
+  registerAdmin,
 } = require("../Controller/AccountController");
 
 const { checktokken } = require("../Middleware/check");
@@ -17,6 +18,7 @@ router.post("/signin", signIn);
 router.get("/getaccountbycus", checktokken, GetAccountByCus);
 router.get("/DetailAccount/:_id", DetailAccount);
 router.get("/getaccount", GetAccountByAdmin);
+router.post("/registeradmin", registerAdmin);
 router.put("/updateaccount/:_id", UpdateAccount);
 
 module.exports = router;

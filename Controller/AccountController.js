@@ -1,4 +1,5 @@
 const CustomerDB = require("../Schema/schema.js").Customer;
+const AdminDB = require("../Schema/schema.js").Admin;
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs"); // Thêm thư viện bcryptjs để mã hóa mật khẩu
@@ -29,43 +30,70 @@ const register = async (req, res) => {
   }
 };
 
-const signIn = async (req, res) => {
+const registerAdmin = async (req, res) => {
   try {
-    const { NameCus, IDCard } = req.body;
-
-    const account = await CustomerDB.findOne({ NameCus });
-
-    if (!account) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    // Check password with bcrypt
-    const isMatch = await bcrypt.compare(IDCard, account.IDCard);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    // Ensure account._id is defined before creating token
-    if (!account._id) {
-      return res.status(500).json({ message: "Account ID is missing" });
-    }
-    const accesstokken = jwt.sign(
-      {
-        _id: account._id,
-        NameCus: account.NameCus,
-        IDCard: account.IDCard,
-        TypeCard: account.TypeCard,
-        Image: account.Image,
-        NumberPhone: account.NumberPhone,
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
-    res.status(200).json(accesstokken);
+    const { _id, Password } = req.body;
+    const hashedPassword = await bcrypt.hash(Password, 10);
+    const account = await AdminDB.create({ _id, Password: hashedPassword });
+    res.status(200).json({
+      success: true,
+      message: "Account created successfully",
+    });
+    await account.save();
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+const signIn = async (req, res) => {
+  try {
+    const { Name, Password } = req.body;
+
+    const admin = await AdminDB.findOne({ _id: Name });
+    const account = await CustomerDB.findOne({ NameCus: Name });
+
+    let isMatch, accesstoken;
+
+    if (admin) {
+      isMatch = await bcrypt.compare(Password, admin.Password);
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ message: "Tài khoản hoặc mật khẩu không hợp lệ" });
+      }
+
+      accesstoken = jwt.sign(
+        { _id: admin._id, role: "Admin" },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "3h" }
+      );
+    } else {
+      if (!account) {
+        return res.status(400).json({ message: "Tài khoản không hợp lệ" });
+      }
+
+      isMatch = await bcrypt.compare(Password, account.IDCard);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Mật khẩu không hợp lệ" });
+      }
+
+      accesstoken = jwt.sign(
+        {
+          _id: account._id,
+          NameCus: account.NameCus,
+          IDCard: account.IDCard,
+          TypeCard: account.TypeCard,
+          Image: account.Image,
+          NumberPhone: account.NumberPhone,
+          role: "Customer",
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "3h" }
+      );
+    }
+    res.status(200).json({ token: accesstoken });
+  } catch (error) {
+    res.status(500).json({ message: "Đã xảy ra lỗi, vui lòng thử lại" });
   }
 };
 
@@ -120,4 +148,5 @@ module.exports = {
   GetAccountByAdmin,
   GetAccountByCus,
   UpdateAccount,
+  registerAdmin,
 };
