@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 const counterSchema = new mongoose.Schema({
   _id: String,
@@ -35,6 +36,13 @@ const VehicleSchema = new mongoose.Schema({
   Branch: { type: String, required: true },
   State: { type: String, required: true },
   Price: { type: Number, required: true },
+  Description: { type: String, required: true },
+});
+
+const ImageSchema = new mongoose.Schema({
+  _id: { type: String, default: uuidv4 },
+  Vehicle_ID: { type: String, required: true },
+  ImageVehicle: { type: String, required: true },
 });
 
 const DriverSchema = new mongoose.Schema({
@@ -45,6 +53,7 @@ const DriverSchema = new mongoose.Schema({
   Image: { type: String, required: true },
   StateDriver: { type: String, required: true },
   Price: { type: Number, required: true },
+  Vehicle_ID: { type: String, required: true },
 });
 
 const ContractSchema = new mongoose.Schema({
@@ -78,6 +87,7 @@ const Contract = mongoose.model("Contract", ContractSchema);
 const Report = mongoose.model("Report", ReportSchema);
 const Reservation = mongoose.model("Reservation", ReservationSchema);
 const Admin = mongoose.model("Admin", AdminSchema);
+const ImageVehicle = mongoose.model("Image", ImageSchema);
 
 module.exports = {
   CounterReport,
@@ -92,4 +102,5 @@ module.exports = {
   Report,
   Reservation,
   Admin,
+  ImageVehicle,
 };

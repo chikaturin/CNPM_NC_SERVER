@@ -9,14 +9,16 @@ const {
   deleteVehicle,
   Sort_Vehicle,
   updateState,
+  getSort_Vehicle,
 } = require("../Controller/VehicleController");
 
 router.post("/createVehicle", createVehicle);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
-router.get("/getVehicleById/:_id", getVehicleById);
+router.get("/DetailVehicle/:_id", getVehicleById);
 router.put("/updateVehicle/:_id", updateVehicle);
 router.get("/DeleteVehicle/:_id", deleteVehicle);
-router.post("/Sort_Vehicle", Sort_Vehicle);
+router.get("/Sort_Vehicle/:Number_Seats", Sort_Vehicle);
 router.post("/updateState/:_id", updateState);
+router.get("/getSort_Vehicle", getSort_Vehicle);
 
 module.exports = router;
