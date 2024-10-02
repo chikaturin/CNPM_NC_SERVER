@@ -43,7 +43,7 @@ const GetDriverById = async (req, res) => {
   try {
     const { _id } = req.params;
     const driver = await DriverDB.findOne({ _id });
-    res.status(200).json({ driver });
+    res.status(200).json(driver);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -52,13 +52,16 @@ const GetDriverById = async (req, res) => {
 const UpdateDriver = async (req, res) => {
   try {
     const { _id } = req.params;
-    const driver = await DriverDB.findOneAndUpdate({ _id });
-    const { NameDriver, NumberPhone, IDCard, Image } = req.body;
-    driver.NameDriver = NameDriver;
-    driver.NumberPhone = NumberPhone;
-    driver.IDCard = IDCard;
-    driver.Image = Image;
-    await driver.save();
+    const { Price, NumberPhone, Image, StateDriver } = req.body;
+    const driver = await DriverDB.findOneAndUpdate(
+      { _id },
+      { Price, NumberPhone, Image, StateDriver },
+      { new: true }
+    );
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found to update" });
+    }
+    res.status(200).json(driver);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -76,7 +79,23 @@ const GetDriverByCustomer = async (req, res) => {
 const DeleteDriver = async (req, res) => {
   try {
     const { _id } = req.params;
-    await DriverDB.findOneAndDelete({ _id });
+    const driver = await DriverDB.findOne({ _id });
+    if (
+      driver.StateDriver == "Unavailable" ||
+      driver.StateDriver == "Deleted"
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Driver is not available, so you can not delete" });
+    }
+    if (!driver) {
+      return res
+        .status(404)
+        .json({ message: "Driver not found to update state" });
+    }
+    driver.StateDriver = "Deleted";
+    await driver.save();
+
     res.status(200).json({ message: "Driver deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });

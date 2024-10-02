@@ -15,6 +15,6 @@ router.get("/GetDriverByAdmin", GetDriverByAdmin);
 router.get("/GetDriverByCustomer", GetDriverByCustomer);
 router.get("/GetDriverById/:_id", GetDriverById);
 router.put("/UpdateDriver/:_id", UpdateDriver);
-router.delete("/DeleteDriver/:_id", DeleteDriver);
+router.get("/DeleteDriver/:_id", DeleteDriver);
 
 module.exports = router;
