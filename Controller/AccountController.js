@@ -2,13 +2,21 @@ const CustomerDB = require("../Schema/schema.js").Customer;
 const AdminDB = require("../Schema/schema.js").Admin;
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const bcrypt = require("bcryptjs"); // Thêm thư viện bcryptjs để mã hóa mật khẩu
+const bcrypt = require("bcryptjs");
 dotenv.config();
 
 const register = async (req, res) => {
   try {
-    const { NameCus, NumberPhone, IDCard, TypeCard, Image } = req.body;
+    const { NameCus, NumberPhone, IDCard, TypeCard } = req.body;
     const _id = IDCard;
+
+    const imagePath = req.file ? req.file.path : null;
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Vui lòng tải lên hình ảnh." });
+    }
 
     const hashedPassword = await bcrypt.hash(IDCard, 10);
 
@@ -18,8 +26,10 @@ const register = async (req, res) => {
       NumberPhone,
       IDCard: hashedPassword,
       TypeCard,
-      Image,
+      Image: imagePath,
     });
+
+    await account.save();
 
     res.status(200).json({
       success: true,

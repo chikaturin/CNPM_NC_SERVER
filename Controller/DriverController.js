@@ -3,7 +3,14 @@ const counterDriver = require("../Schema/schema").CounterDriver;
 
 const CreateDriver = async (req, res) => {
   try {
-    const { NameDriver, NumberPhone, Driving_License, Image, Price } = req.body;
+    const {
+      NameDriver,
+      NumberPhone,
+      Driving_License,
+      Image,
+      Price,
+      Vehicle_ID,
+    } = req.body;
     const counterdriver = await counterDriver.findOneAndUpdate(
       { _id: "Driver" },
       { $inc: { seq: 1 } },
@@ -19,6 +26,7 @@ const CreateDriver = async (req, res) => {
       Image,
       StateDriver,
       Price,
+      Vehicle_ID,
     });
     await driver.save();
     res.status(200).json({
