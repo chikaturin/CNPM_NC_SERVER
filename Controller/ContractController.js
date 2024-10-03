@@ -100,7 +100,7 @@ const PaymentContract = async (req, res) => {
 };
 
 const HistoryContractByAdmin = async (req, res) => {
-  const { StatePay } = req.body; // lấy giá trị StatePay từ body
+  const { StatePay } = req.params;
   try {
     const contract = await ContractDB.find({ StatePay: StatePay });
     res.status(200).json(contract);
@@ -109,8 +109,17 @@ const HistoryContractByAdmin = async (req, res) => {
   }
 };
 
+const ContractByAdmin = async (req, res) => {
+  try {
+    const contract = await ContractDB.find();
+    res.status(200).json(contract);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 const HistoryContractByCustomer = async (req, res) => {
-  const { StatePay } = req.body; //chuyền vào trạng thái đag thanh toán hay đã thanh toán thành công
+  const { StatePay } = req.body;
   const MaKH = req.decoded._id;
   try {
     const contract = await ContractDB.find({ StatePay: StatePay, MaKH });
@@ -169,4 +178,5 @@ module.exports = {
   HistoryContractByCustomer,
   GetContractById,
   CompletedContract,
+  ContractByAdmin,
 };

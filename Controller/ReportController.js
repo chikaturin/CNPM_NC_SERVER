@@ -54,4 +54,4 @@ const DeleteReport = async (res, req) => {
     res.status(400).json({ message: error.message });
   }
 };
-export { CreateReport, GetReport, GetReportById, DeleteReport };
+module.exports = { CreateReport, GetReport, GetReportById, DeleteReport };

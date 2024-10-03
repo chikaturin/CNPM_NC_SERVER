@@ -16,7 +16,7 @@ const getVehicleByCus = async (req, res) => {
     });
 
     const reservations = await ReservationDB.find({
-      Desired_Date: desiredDate,
+      Desired_Date: { $gte: desiredDate },
     });
 
     const reservedVehicleIds = [
@@ -99,4 +99,13 @@ const getVehicle_ReservationByAdmin = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getVehicleByCus,
+  createVehicle_Reservation_Book,
+  deleteVehicle_Reservation,
+  getVehicle_Reservation_ID,
+  getVehicle_ReservationByCus,
+  getVehicle_ReservationByAdmin,
 };
