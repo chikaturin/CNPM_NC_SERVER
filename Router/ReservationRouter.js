@@ -12,17 +12,13 @@ const {
 
 const { checktokken } = require("../Middleware/check");
 
-router.get("/getvehiclebycus", getVehicleByCus);
+router.post("/getvehiclebycus/:_id", getVehicleByCus);
 router.post(
   "/createvehicle_reservation_book",
   checktokken,
   createVehicle_Reservation_Book
 );
-router.delete(
-  "/deletevehicle_reservation/:_id",
-  checktokken,
-  deleteVehicle_Reservation
-);
+router.get("/deletevehicle_reservation/:_id", deleteVehicle_Reservation);
 router.get(
   "/getvehicle_reservation_id/:_id",
   checktokken,
@@ -33,8 +29,6 @@ router.get(
   checktokken,
   getVehicle_ReservationByCus
 );
-router.get(
-  "/getvehicle_reservationbyadmin",
-  checktokken,
-  getVehicle_ReservationByAdmin
-); //export the router
+router.get("/getvehicle_reservationbyadmin", getVehicle_ReservationByAdmin);
+
+module.exports = router;

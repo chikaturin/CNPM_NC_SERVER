@@ -33,6 +33,7 @@ app.use("/api", require("./Router/VehicleRouter.js"));
 app.use("/api", require("./Router/ContractRouter.js"));
 app.use("/api", require("./Router/DriverRouter.js"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api", require("./Router/ReservationRouter.js"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

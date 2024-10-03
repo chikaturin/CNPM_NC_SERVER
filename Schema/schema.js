@@ -23,8 +23,8 @@ const customerSchema = new mongoose.Schema({
 //Sổ đặt xe trước
 const ReservationSchema = new mongoose.Schema({
   _id: { type: String, required: true }, //Mã đặt xe trước
+  Book_date: { type: Date, required: true },
   Desired_Date: { type: Date, required: true },
-  Return_Date: { type: Date, required: true },
   MaKH: { type: String, required: true },
   MaVehicle: { type: String, required: true },
 });
