@@ -78,7 +78,7 @@ const ReportSchema = new mongoose.Schema({
 const CounterReport = mongoose.model("CounterReport", counterSchema);
 const CounterDriver = mongoose.model("CounterDriver", counterSchema);
 const CounterContract = mongoose.model("CounterContract", counterSchema);
-const CounterReservation = mongoose.model("", counterSchema);
+const CounterReservation = mongoose.model("CounterReservation", counterSchema);
 
 const Customer = mongoose.model("Customer", customerSchema);
 const Vehicle = mongoose.model("Vehicle", VehicleSchema);
