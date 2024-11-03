@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const fileUpdate = require("../cloudinary.config");
 
 const {
   CreateDriver,
@@ -10,7 +12,7 @@ const {
   DeleteDriver,
 } = require("../Controller/DriverController");
 
-router.post("/CreateDriver", CreateDriver);
+router.post("/CreateDriver", fileUpdate.single("file"), CreateDriver);
 router.get("/GetDriverByAdmin", GetDriverByAdmin);
 router.get("/GetDriverByCustomer", GetDriverByCustomer);
 router.get("/GetDriverById/:_id", GetDriverById);

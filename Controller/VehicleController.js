@@ -4,25 +4,29 @@ const { z } = require("zod");
 
 const createVehicle = async (req, res) => {
   const vehicleSchema = z.object({
-    _id: z.string().min(1, "Vehicle is is exist"),
-    Number_Seats: z.min(0, "Number_Seats is biger than 0"),
+    _id: z.string().min(1, "Vehicle ID is required"),
+    Number_Seats: z.number().min(1, "Number_Seats must be greater than 0"),
     Branch: z.string(),
-    Price: z.min(0, "Price is biger than 0"),
+    Price: z.number().min(1, "Price must be greater than 0"),
     Description: z.string(),
+    ImageVehicles: z.array(z.string()).optional(),
   });
+
   try {
     const validateData = vehicleSchema.parse(req.body);
-    const { _id, Number_Seats, Branch, Price, ImageVehicles, Description } =
-      validateData;
+    const { _id, Number_Seats, Branch, Price, Description } = validateData;
     const State = "Available";
-    for (const imageVehicle of ImageVehicles) {
-      const { imgVehicle } = imageVehicle;
-      const newimage = await ImageDB.create({
+
+    const imageUrls = req.files.map((file) => file.path);
+
+    for (const imgVehicle of imageUrls) {
+      const newImage = await ImageDB.create({
         Vehicle_ID: _id,
         ImageVehicle: imgVehicle,
       });
-      await newimage.save();
+      await newImage.save();
     }
+
     const vehicle = await VehicleDB.create({
       _id,
       Number_Seats,
@@ -32,6 +36,7 @@ const createVehicle = async (req, res) => {
       State,
     });
     await vehicle.save();
+
     res.status(201).json({ message: "VehicleDB created successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });

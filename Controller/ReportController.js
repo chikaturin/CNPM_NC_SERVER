@@ -10,11 +10,12 @@ const CreateReport = async (res, req) => {
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
+    const imageUrl = req.file.path;
     const _id = `RP${counterReport.seq}`;
     const report = new Report({
       _id,
       Content,
-      image,
+      image: imageUrl,
       ID_Contract,
       ReportBy,
     });

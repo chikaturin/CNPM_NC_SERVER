@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const fileUpdate = require("../cloudinary.config");
 
 const {
   createVehicle,
@@ -12,7 +14,7 @@ const {
   getSort_Vehicle,
 } = require("../Controller/VehicleController");
 
-router.post("/createVehicle", createVehicle);
+router.post("/createVehicle", fileUpdate.array("file", 4), createVehicle);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
 router.get("/DetailVehicle/:_id", getVehicleById);
 router.put("/updateVehicle/:_id", updateVehicle);

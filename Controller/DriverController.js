@@ -9,6 +9,7 @@ const CreateDriver = async (req, res) => {
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
+    const imageUrl = req.file.path;
     const _id = `DR${counterdriver.seq}`;
     const StateDriver = "Available";
     const driver = new DriverDB({
@@ -16,7 +17,7 @@ const CreateDriver = async (req, res) => {
       NameDriver,
       NumberPhone,
       Driving_License,
-      Image,
+      Image: imageUrl,
       StateDriver,
       Price,
     });
