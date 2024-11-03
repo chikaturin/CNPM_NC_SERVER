@@ -1,17 +1,19 @@
 const VehicleDB = require("../Schema/schema").Vehicle;
 const ImageDB = require("../Schema/schema").ImageVehicle;
+const { z } = require("zod");
 
 const createVehicle = async (req, res) => {
+  const vehicleSchema = z.object({
+    _id: z.string().min(1, "Vehicle is is exist"),
+    Number_Seats: z.min(0, "Number_Seats is biger than 0"),
+    Branch: z.string(),
+    Price: z.min(0, "Price is biger than 0"),
+    Description: z.string(),
+  });
   try {
-    const {
-      _id,
-      Number_Seats,
-      Image,
-      Branch,
-      Price,
-      ImageVehicles,
-      Description,
-    } = req.body;
+    const validateData = vehicleSchema.parse(req.body);
+    const { _id, Number_Seats, Branch, Price, ImageVehicles, Description } =
+      validateData;
     const State = "Available";
     for (const imageVehicle of ImageVehicles) {
       const { imgVehicle } = imageVehicle;
@@ -24,7 +26,6 @@ const createVehicle = async (req, res) => {
     const vehicle = await VehicleDB.create({
       _id,
       Number_Seats,
-      Image,
       Branch,
       Price,
       Description,
@@ -69,9 +70,14 @@ const getVehicleById = async (req, res) => {
 };
 
 const updateVehicle = async (req, res) => {
+  const vehicleSchema = z.object({
+    Price: z.min(0, "Price must be greater than 0"),
+    Description: z.string(),
+  });
   try {
     const { _id } = req.params;
-    const { Price, State, Description } = req.body;
+    const validateData = vehicleSchema.parse(req.body);
+    const { Price, State, Description } = validateData;
     const vehicle = await VehicleDB.findOneAndUpdate(
       { _id },
       { State, Description, Price },

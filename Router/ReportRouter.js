@@ -8,6 +8,8 @@ const {
   DeleteReport,
 } = require("../Controller/ReportController");
 
+const CheckToken = require("../Middleware/check").checktoken;
+
 router.post("/CreateReport", CreateReport);
 router.get("/GetReport", GetReport);
 router.get("/GetReportById/:_id", GetReportById);

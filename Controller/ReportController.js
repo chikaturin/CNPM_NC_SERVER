@@ -4,6 +4,7 @@ const couterRerport = require("../Schema/schema").CounterReport;
 const CreateReport = async (res, req) => {
   try {
     const { Content, image, ID_Contract } = req.body;
+    const ReportBy = req.decoded?.NameCus;
     const counterReport = await couterRerport.findOneAndUpdate(
       { _id: "Report" },
       { $inc: { seq: 1 } },
@@ -15,6 +16,7 @@ const CreateReport = async (res, req) => {
       Content,
       image,
       ID_Contract,
+      ReportBy,
     });
     await report.save();
     res.status(200).json({

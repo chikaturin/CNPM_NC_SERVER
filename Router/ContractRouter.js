@@ -11,18 +11,14 @@ const {
   ContractByAdmin,
 } = require("../Controller/ContractController");
 
-const { checktokken } = require("../Middleware/check");
+const { checktoken } = require("../Middleware/check");
 
 router.get("/ContractByAdmin", ContractByAdmin);
 
 router.post("/CalculateContractPrice", CalculateContractPrice);
-router.post("/PaymentContract", checktokken, PaymentContract);
+router.post("/PaymentContract", checktoken, PaymentContract);
 router.get("/HistoryContractByAdmin/:StatePay", HistoryContractByAdmin);
-router.get(
-  "/HistoryContractByCustomer",
-  checktokken,
-  HistoryContractByCustomer
-);
+router.get("/HistoryContractByCustomer", checktoken, HistoryContractByCustomer);
 router.get("/GetContractById/:_id", GetContractById);
 router.post("/CompletedContract/:_id", CompletedContract);
 

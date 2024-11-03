@@ -10,23 +10,23 @@ const {
   getVehicle_ReservationByAdmin,
 } = require("../Controller/ReservationController");
 
-const { checktokken } = require("../Middleware/check");
+const { checktoken } = require("../Middleware/check");
 
 router.post("/getvehiclebycus/:_id", getVehicleByCus);
 router.post(
   "/createvehicle_reservation_book",
-  checktokken,
+  checktoken,
   createVehicle_Reservation_Book
 );
 router.get("/deletevehicle_reservation/:_id", deleteVehicle_Reservation);
 router.get(
   "/getvehicle_reservation_id/:_id",
-  checktokken,
+  checktoken,
   getVehicle_Reservation_ID
 );
 router.get(
   "/getvehicle_reservationbycus",
-  checktokken,
+  checktoken,
   getVehicle_ReservationByCus
 );
 router.get("/getvehicle_reservationbyadmin", getVehicle_ReservationByAdmin);

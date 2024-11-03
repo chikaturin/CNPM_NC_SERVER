@@ -32,11 +32,13 @@ const ReservationSchema = new mongoose.Schema({
 const VehicleSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // biển số xe
   Number_Seats: { type: Number, required: true },
-  Image: { type: String, required: true },
   Branch: { type: String, required: true },
   State: { type: String, required: true },
   Price: { type: Number, required: true },
   Description: { type: String, required: true },
+  CreateBy: { type: String, required: true },
+  CreateDate: { type: Date, required: true },
+  VehicleName: { type: String, required: true },
 });
 
 const ImageSchema = new mongoose.Schema({
@@ -53,7 +55,6 @@ const DriverSchema = new mongoose.Schema({
   Image: { type: String, required: true },
   StateDriver: { type: String, required: true },
   Price: { type: Number, required: true },
-  Vehicle_ID: { type: String, required: true },
 });
 
 const ContractSchema = new mongoose.Schema({
@@ -73,6 +74,7 @@ const ReportSchema = new mongoose.Schema({
   Content: { type: String, required: true },
   Image: { type: String, required: true },
   IDContract: { type: String, required: true },
+  ReportBy: { type: String, required: true },
 });
 
 const CounterReport = mongoose.model("CounterReport", counterSchema);
