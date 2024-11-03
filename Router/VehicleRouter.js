@@ -14,7 +14,7 @@ const {
   getSort_Vehicle,
 } = require("../Controller/VehicleController");
 
-router.post("/createVehicle", fileUpdate.array("file", 4), createVehicle);
+router.post("/createVehicle", fileUpdate.array("Image", 4), createVehicle);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
 router.get("/DetailVehicle/:_id", getVehicleById);
 router.put("/updateVehicle/:_id", updateVehicle);
