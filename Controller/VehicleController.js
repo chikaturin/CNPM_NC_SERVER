@@ -10,16 +10,25 @@ const createVehicle = async (req, res) => {
     Price: z.number().min(1, "Price must be greater than 0"),
     Description: z.string(),
     ImageVehicles: z.array(z.string()).optional(),
+    VehicleName: z.string(),
   });
 
   try {
     const validateData = vehicleSchema.parse(req.body);
-    const { _id, Number_Seats, Branch, Price, Description } = validateData;
+    const {
+      _id,
+      Number_Seats,
+      Branch,
+      Price,
+      Description,
+      VehicleName,
+      ImageVehicles,
+    } = validateData;
     const State = "Available";
+    const CreateDate = new Date();
+    const CreateBy = req.decoded._id;
 
-    const imageUrls = req.files.map((file) => file.path);
-
-    for (const imgVehicle of imageUrls) {
+    for (const imgVehicle of ImageVehicles) {
       const newImage = await ImageDB.create({
         Vehicle_ID: _id,
         ImageVehicle: imgVehicle,
@@ -34,6 +43,9 @@ const createVehicle = async (req, res) => {
       Price,
       Description,
       State,
+      CreateBy,
+      VehicleName,
+      CreateDate,
     });
     await vehicle.save();
 
