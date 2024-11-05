@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getVehicleByCus,
   createVehicle_Reservation_Book,
   deleteVehicle_Reservation,
   getVehicle_Reservation_ID,
@@ -12,7 +11,6 @@ const {
 
 const { checktoken } = require("../Middleware/check");
 
-router.post("/getvehiclebycus/:_id", getVehicleByCus);
 router.post(
   "/createvehicle_reservation_book",
   checktoken,

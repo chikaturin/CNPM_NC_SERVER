@@ -3,46 +3,17 @@ const ReservationDB = require("../Schema/schema").Reservation;
 const ContractDB = require("../Schema/schema").Contract;
 const VehicleDB = require("../Schema/schema").Vehicle;
 
-const getVehicleByCus = async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const { Desired_Date } = req.body;
-    const desiredDate = new Date(Desired_Date);
-
-    if (desiredDate < new Date()) {
-      return res.status(400).json({ message: "Invalid Date" });
-    }
-
-    const contract = await ContractDB.findOne({ MaVehicle: _id });
-    if (contract) {
-      const returnDate = new Date(contract.Return_Date);
-      if (desiredDate <= returnDate) {
-        return res
-          .status(201)
-          .json({ message: "Vehicle is Unavailable (Contract)" });
-      }
-    }
-
-    const reservation = await ReservationDB.findOne({ MaVehicle: _id });
-    if (reservation) {
-      const reservationDate = new Date(reservation.Desired_Date);
-      if (desiredDate <= reservationDate) {
-        return res
-          .status(201)
-          .json({ message: "Vehicle is Unavailable (Reservation)" });
-      }
-    }
-
-    res.status(200).json({ message: "Vehicle is Available" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+const date = (a) => {
+  return new Date(a).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
 
 const createVehicle_Reservation_Book = async (req, res) => {
   try {
-    const { Desired_Date, MaVehicle } = req.body;
-
+    const { Desired_Date, MaVehicle, Return_Date } = req.body;
     const counter = await CounterReservation.findOneAndUpdate(
       { _id: "Reservation" },
       { $inc: { seq: 1 } },
@@ -61,6 +32,42 @@ const createVehicle_Reservation_Book = async (req, res) => {
       return res.status(400).json({ message: "Vehicle does not exist" });
     }
 
+    const desiredDate = new Date(Desired_Date);
+
+    if (desiredDate < new Date()) {
+      return res.status(400).json({ message: "Invalid Date" });
+    }
+
+    const contract = await ContractDB.findOne({ MaVehicle: _id });
+    if (contract) {
+      const returnDate = new Date(contract.Return_Date);
+      if (desiredDate <= returnDate) {
+        return res
+          .status(201)
+          .json({ message: "Vehicle is Unavailable Contract" });
+      }
+    }
+
+    const ReturnDateCheck = new Date(Return_Date);
+
+    if (ReturnDateCheck <= desiredDate) {
+      return res
+        .status(201)
+        .json({ message: "Return Date must be after Desired Date" });
+    }
+
+    const reservationCheck = await ReservationDB.findOne({ MaVehicle });
+    if (reservationCheck) {
+      const reservationDate = new Date(reservationCheck.Desired_Date);
+      if (ReturnDateCheck >= reservationDate) {
+        return res.status(201).json({
+          message:
+            "You can not book this vehicle because it is reserved, Please choose a return date before " +
+            date(reservationDate),
+        });
+      }
+    }
+
     const Book_date = new Date();
     const reservation = await ReservationDB.create({
       _id,
@@ -68,6 +75,7 @@ const createVehicle_Reservation_Book = async (req, res) => {
       Desired_Date,
       Book_date,
       MaVehicle,
+      Return_Date,
     });
 
     res.status(200).json({
@@ -128,7 +136,6 @@ const getVehicle_ReservationByAdmin = async (req, res) => {
 };
 
 module.exports = {
-  getVehicleByCus,
   createVehicle_Reservation_Book,
   deleteVehicle_Reservation,
   getVehicle_Reservation_ID,

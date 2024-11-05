@@ -2,6 +2,7 @@ const ContractDB = require("../Schema/schema").Contract;
 const DriverDB = require("../Schema/schema").Driver;
 const VehicleDB = require("../Schema/schema").Vehicle;
 const CounterContractDB = require("../Schema/schema").CounterContract;
+const ReservationDB = require("../Schema/schema").Reservation;
 
 const CalculateContractPrice = async (req, res) => {
   try {
@@ -33,6 +34,14 @@ const CalculateContractPrice = async (req, res) => {
   }
 };
 
+const date = (a) => {
+  return new Date(a).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
 const PaymentContract = async (req, res) => {
   try {
     const { Pickup_Date, Return_Date, MaVehicle, MaDriver, Total_Pay } =
@@ -41,6 +50,14 @@ const PaymentContract = async (req, res) => {
     const StatePay = "Staked";
     const MaKH = req.decoded._id;
     const ContractDate = new Date();
+    const return_Date = new Date(Return_Date);
+    const pickup_Date = new Date(Pickup_Date);
+
+    if (return_Date <= pickup_Date) {
+      return res
+        .status(400)
+        .json({ message: "Return Date must be after Pickup Date" });
+    }
 
     const counterContract = await CounterContractDB.findOneAndUpdate(
       { _id: "Contract" },
@@ -53,6 +70,18 @@ const PaymentContract = async (req, res) => {
       { State: "Unavailable" },
       { new: true }
     );
+
+    const Reservation = await ReservationDB.findOne({ MaVehicle });
+    if (Reservation) {
+      const desired_Date = new Date(Reservation.Desired_Date);
+      if (return_Date >= desired_Date) {
+        return res.status(400).json({
+          message:
+            "You can not book this vehicle because it is reserved, Please choose a return date before " +
+            date(desired_Date),
+        });
+      }
+    }
 
     const _id = `CT${counterContract.seq}`;
     let contract;
