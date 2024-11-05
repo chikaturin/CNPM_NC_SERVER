@@ -3,12 +3,60 @@ const ReservationDB = require("../Schema/schema").Reservation;
 const ContractDB = require("../Schema/schema").Contract;
 const VehicleDB = require("../Schema/schema").Vehicle;
 
-const date = (a) => {
+const formatDate = (a) => {
   return new Date(a).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
+};
+
+const dateContract = async (req, res) => {
+  try {
+    const { MaVehicle } = req.body;
+    const Reservation = await ReservationDB.findOne({ MaVehicle });
+    let date = null;
+    if (Reservation) {
+      let desiredDate = new Date(Reservation.Desired_Date);
+      desiredDate.setDate(desiredDate.getDate() - 1);
+      date = formatDate(desiredDate);
+      return res.status(201).json({ date });
+    }
+    res.status(200).json({ date });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const dateReservation = async (req, res) => {
+  try {
+    const { MaVehicle } = req.body;
+    const contract = await ContractDB.findOne({ MaVehicle });
+    const reservationDate = await ReservationDB.findOne({ MaVehicle });
+
+    let StartDate = null;
+    let EndDate = null;
+    let DesiredDate = null;
+
+    if (contract) {
+      let returnDate = new Date(contract.Return_Date);
+      returnDate.setDate(returnDate.getDate() + 1);
+      StartDate = formatDate(returnDate);
+    }
+
+    if (reservationDate) {
+      let desiredDate = new Date(reservationDate.Desired_Date);
+      desiredDate.setDate(desiredDate.getDate() - 1);
+      DesiredDate = formatDate(desiredDate);
+      let returnDate = new Date(reservationDate.Return_Date);
+      returnDate.setDate(returnDate.getDate() + 1);
+      EndDate = formatDate(returnDate);
+    }
+
+    res.status(200).json({ StartDate, DesiredDate, EndDate });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 const createVehicle_Reservation_Book = async (req, res) => {
@@ -49,7 +97,7 @@ const createVehicle_Reservation_Book = async (req, res) => {
         return res.status(201).json({
           message:
             "You can not book this vehicle because it is contract, Please choose a return date after " +
-            date(returnDate),
+            formatDate(returnDate),
         });
       }
     }
@@ -67,13 +115,13 @@ const createVehicle_Reservation_Book = async (req, res) => {
         return res.status(201).json({
           message:
             "You can not book this vehicle because it is reserved, Please choose a return date before " +
-            date(reservationCheck.Desired_Date),
+            formatDate(reservationCheck.Desired_Date),
         });
       } else if (desiredDate >= reservationDate) {
         return res.status(201).json({
           message:
             "You can not book this vehicle because it is reserved, Please choose a desired date after " +
-            date(reservationCheck.Return_Date),
+            formatDate(reservationCheck.Return_Date),
         });
       }
     }
@@ -149,4 +197,6 @@ module.exports = {
   getVehicle_Reservation_ID,
   getVehicle_ReservationByCus,
   getVehicle_ReservationByAdmin,
+  dateContract,
+  dateReservation,
 };

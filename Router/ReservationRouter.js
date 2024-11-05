@@ -7,6 +7,8 @@ const {
   getVehicle_Reservation_ID,
   getVehicle_ReservationByCus,
   getVehicle_ReservationByAdmin,
+  dateContract,
+  dateReservation,
 } = require("../Controller/ReservationController");
 
 const { checktoken } = require("../Middleware/check");
@@ -28,5 +30,8 @@ router.get(
   getVehicle_ReservationByCus
 );
 router.get("/getvehicle_reservationbyadmin", getVehicle_ReservationByAdmin);
+
+router.get("/datecontract", dateContract);
+router.get("/datereservation", dateReservation);
 
 module.exports = router;
