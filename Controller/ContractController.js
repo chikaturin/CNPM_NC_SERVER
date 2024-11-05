@@ -6,7 +6,8 @@ const ReservationDB = require("../Schema/schema").Reservation;
 
 const CalculateContractPrice = async (req, res) => {
   try {
-    const { Pickup_Date, Return_Date, MaVehicle, MaDriver } = req.body;
+    const { Pickup_Date, Return_Date, MaVehicle, MaDriver, Insurance } =
+      req.body;
 
     const pickupDateObj = new Date(Pickup_Date);
     const returnDateObj = new Date(Return_Date);
@@ -15,20 +16,23 @@ const CalculateContractPrice = async (req, res) => {
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
     const Vehicle = await VehicleDB.findOne({ _id: MaVehicle });
+    if (!Vehicle) {
+      return res.status(400).json({ message: "Vehicle not found" });
+    }
+
     let totalPay;
 
-    if (!Vehicle) {
-      res.status(400).json({ message: "Vehicle not found" });
-    }
-
     if (!MaDriver) {
-      totalPay = Vehicle.Price * daysDiff;
+      totalPay = Vehicle.Price * daysDiff + Insurance;
     } else {
       const Driver = await DriverDB.findOne({ _id: MaDriver });
-      totalPay = (Vehicle.Price + Driver.Price) * daysDiff;
+      if (!Driver) {
+        return res.status(400).json({ message: "Driver not found" });
+      }
+      totalPay = (Vehicle.Price + Driver.Price) * daysDiff + Insurance;
     }
 
-    res.status(200).json(totalPay);
+    res.status(200).json({ totalPay });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
