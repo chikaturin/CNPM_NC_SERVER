@@ -17,12 +17,12 @@ router.get("/ContractByAdmin", ContractByAdmin);
 
 router.post("/CalculateContractPrice", CalculateContractPrice);
 router.post("/PaymentContract", checktoken, PaymentContract);
+router.get("/HistoryContractByAdmin/:StatePay", HistoryContractByAdmin);
 router.get(
-  "/HistoryContractByAdmin/:StatePay",
+  "/HistoryContractByCustomer/:StatePay",
   checktoken,
-  HistoryContractByAdmin
+  HistoryContractByCustomer
 );
-router.get("/HistoryContractByCustomer", checktoken, HistoryContractByCustomer);
 router.get("/GetContractById/:_id", GetContractById);
 router.post("/CompletedContract/:_id", CompletedContract);
 
