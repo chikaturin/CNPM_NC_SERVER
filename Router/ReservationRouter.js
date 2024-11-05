@@ -31,7 +31,7 @@ router.get(
 );
 router.get("/getvehicle_reservationbyadmin", getVehicle_ReservationByAdmin);
 
-router.get("/datecontract", dateContract);
-router.get("/datereservation", dateReservation);
+router.get("/datecontract/:MaVehicle", dateContract);
+router.get("/datereservation/:MaVehicle", dateReservation);
 
 module.exports = router;

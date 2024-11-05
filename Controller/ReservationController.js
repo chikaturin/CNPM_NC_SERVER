@@ -13,7 +13,7 @@ const formatDate = (a) => {
 
 const dateContract = async (req, res) => {
   try {
-    const { MaVehicle } = req.body;
+    const { MaVehicle } = req.params;
     const Reservation = await ReservationDB.findOne({ MaVehicle });
     let date = null;
     if (Reservation) {
@@ -30,7 +30,7 @@ const dateContract = async (req, res) => {
 
 const dateReservation = async (req, res) => {
   try {
-    const { MaVehicle } = req.body;
+    const { MaVehicle } = req.params;
     const contract = await ContractDB.findOne({ MaVehicle });
     const reservationDate = await ReservationDB.findOne({ MaVehicle });
 
