@@ -119,7 +119,7 @@ const ContractByAdmin = async (req, res) => {
 };
 
 const HistoryContractByCustomer = async (req, res) => {
-  const { StatePay } = req.body;
+  const { StatePay } = req.params;
   const MaKH = req.decoded._id;
   try {
     const contract = await ContractDB.find({ StatePay: StatePay, MaKH });
