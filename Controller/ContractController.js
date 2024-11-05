@@ -32,7 +32,7 @@ const CalculateContractPrice = async (req, res) => {
       totalPay = (Vehicle.Price + Driver.Price) * daysDiff + Insurance;
     }
 
-    res.status(200).json({ totalPay });
+    res.status(200).json(totalPay);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

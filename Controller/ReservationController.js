@@ -22,7 +22,7 @@ const dateContract = async (req, res) => {
       date = formatDate(desiredDate);
       return res.status(201).json({ date });
     }
-    res.status(200).json({ date });
+    res.status(200).json(date);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
