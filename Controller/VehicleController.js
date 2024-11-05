@@ -66,12 +66,17 @@ const getVehicleByAdmin = async (req, res) => {
 
 const getVehicleByCus = async (req, res) => {
   try {
-    const vehicle = await VehicleDB.find({ State: "Available" });
-    const imageVehicle = await ImageDB.find({ Vehicle_ID: vehicle._id });
-    const response = {
-      ...vehicle.toObject(),
-      imageVehicle: imageVehicle.map((image) => image.ImageVehicle),
-    };
+    const vehicles = await VehicleDB.find({ State: "Available" });
+
+    const response = await Promise.all(
+      vehicles.map(async (vehicle) => {
+        const images = await ImageDB.find({ Vehicle_ID: vehicle._id });
+        return {
+          ...vehicle.toObject(),
+          imageVehicle: images.map((image) => image.ImageVehicle),
+        };
+      })
+    );
 
     res.status(200).json(response);
   } catch (error) {
