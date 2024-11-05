@@ -33,22 +33,26 @@ const createVehicle_Reservation_Book = async (req, res) => {
     }
 
     const desiredDate = new Date(Desired_Date);
+    const ReturnDateCheck = new Date(Return_Date);
 
     if (desiredDate < new Date()) {
       return res.status(400).json({ message: "Invalid Date" });
     }
 
-    const contract = await ContractDB.findOne({ MaVehicle: _id });
+    const contract = await ContractDB.findOne({
+      MaVehicle,
+      StatePay: "Staked",
+    });
     if (contract) {
       const returnDate = new Date(contract.Return_Date);
       if (desiredDate <= returnDate) {
-        return res
-          .status(201)
-          .json({ message: "Vehicle is Unavailable Contract" });
+        return res.status(201).json({
+          message:
+            "You can not book this vehicle because it is contract, Please choose a return date after " +
+            date(returnDate),
+        });
       }
     }
-
-    const ReturnDateCheck = new Date(Return_Date);
 
     if (ReturnDateCheck <= desiredDate) {
       return res
@@ -59,21 +63,25 @@ const createVehicle_Reservation_Book = async (req, res) => {
     const reservationCheck = await ReservationDB.findOne({ MaVehicle });
     if (reservationCheck) {
       const reservationDate = new Date(reservationCheck.Desired_Date);
-      if (ReturnDateCheck >= reservationDate) {
+      if (desiredDate < reservationDate && ReturnDateCheck >= reservationDate) {
         return res.status(201).json({
           message:
             "You can not book this vehicle because it is reserved, Please choose a return date before " +
-            date(reservationDate),
+            date(reservationCheck.Desired_Date),
+        });
+      } else if (desiredDate >= reservationDate) {
+        return res.status(201).json({
+          message:
+            "You can not book this vehicle because it is reserved, Please choose a desired date after " +
+            date(reservationCheck.Return_Date),
         });
       }
     }
 
-    const Book_date = new Date();
     const reservation = await ReservationDB.create({
       _id,
       MaKH,
       Desired_Date,
-      Book_date,
       MaVehicle,
       Return_Date,
     });
