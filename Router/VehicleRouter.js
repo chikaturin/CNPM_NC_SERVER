@@ -12,10 +12,12 @@ const {
   Sort_Vehicle,
   updateState,
   getSort_Vehicle,
+  getVehicleByCus,
 } = require("../Controller/VehicleController");
 const { checktoken } = require("../Middleware/check");
 
 router.post("/createVehicle", checktoken, createVehicle);
+router.get("/getVehicleByCus", getVehicleByCus);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
 router.get("/DetailVehicle/:_id", getVehicleById);
 router.put("/updateVehicle/:_id", updateVehicle);

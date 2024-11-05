@@ -63,6 +63,22 @@ const getVehicleByAdmin = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const getVehicleByCus = async (req, res) => {
+  try {
+    const vehicle = await VehicleDB.find({ State: "Available" });
+    const imageVehicle = await ImageDB.find({ Vehicle_ID: vehicle._id });
+    const response = {
+      ...vehicle.toObject(),
+      imageVehicle: imageVehicle.map((image) => image.ImageVehicle),
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getVehicleById = async (req, res) => {
   try {
     const { _id } = req.params;
@@ -186,5 +202,6 @@ module.exports = {
   deleteVehicle,
   Sort_Vehicle,
   updateState,
+  getVehicleByCus,
   getSort_Vehicle,
 };
