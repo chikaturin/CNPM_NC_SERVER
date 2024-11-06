@@ -20,9 +20,9 @@ const dateContract = async (req, res) => {
       let desiredDate = new Date(Reservation.Desired_Date);
       desiredDate.setDate(desiredDate.getDate() - 1);
       date = formatDate(desiredDate);
-      return res.status(201).json(date);
+      return res.status(201).json({ date });
     }
-    res.status(200).json(date);
+    res.status(200).json({ date });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
