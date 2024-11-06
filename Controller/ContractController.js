@@ -57,12 +57,6 @@ const PaymentContract = async (req, res) => {
     const return_Date = new Date(Return_Date);
     const pickup_Date = new Date(Pickup_Date);
 
-    if (return_Date <= pickup_Date) {
-      return res
-        .status(400)
-        .json({ message: "Return Date must be after Pickup Date" });
-    }
-
     const counterContract = await CounterContractDB.findOneAndUpdate(
       { _id: "Contract" },
       { $inc: { seq: 1 } },
@@ -74,18 +68,6 @@ const PaymentContract = async (req, res) => {
       { State: "Unavailable" },
       { new: true }
     );
-
-    const Reservation = await ReservationDB.findOne({ MaVehicle });
-    if (Reservation) {
-      const desired_Date = new Date(Reservation.Desired_Date);
-      if (return_Date >= desired_Date) {
-        return res.status(400).json({
-          message:
-            "You can not book this vehicle because it is reserved, Please choose a return date before " +
-            date(desired_Date),
-        });
-      }
-    }
 
     const _id = `CT${counterContract.seq}`;
     let contract;
