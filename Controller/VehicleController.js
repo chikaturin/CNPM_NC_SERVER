@@ -57,7 +57,16 @@ const createVehicle = async (req, res) => {
 
 const getVehicleByAdmin = async (req, res) => {
   try {
-    const vehicle = await VehicleDB.find();
+    const vehicle = await VehicleDB.addListener([
+      {
+        $lookup: {
+          from: "images",
+          localField: "_id",
+          foreignField: "Vehicle_ID",
+          as: "images",
+        },
+      },
+    ]);
     res.status(200).json(vehicle);
   } catch (error) {
     res.status(500).json({ message: error.message });
