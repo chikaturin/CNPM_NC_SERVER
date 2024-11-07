@@ -57,7 +57,7 @@ const createVehicle = async (req, res) => {
 
 const getVehicleByAdmin = async (req, res) => {
   try {
-    const vehicle = await VehicleDB.addListener([
+    const vehicle = await VehicleDB.aggregate([
       {
         $lookup: {
           from: "images",
