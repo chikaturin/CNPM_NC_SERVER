@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 
 const register = async (req, res) => {
   try {
-    const { NameCus, NumberPhone, IDCard, TypeCard } = req.body;
+    const { NameCus, NumberPhone, IDCard, TypeCard, Password } = req.body;
     const _id = IDCard;
 
     if (!req.file) {
@@ -16,15 +16,16 @@ const register = async (req, res) => {
     }
     const imageUrl = req.file.path;
 
-    const hashedPassword = await bcrypt.hash(IDCard, 10);
+    const hashedPassword = await bcrypt.hash(Password, 10);
 
     const account = await CustomerDB.create({
       _id,
       NameCus,
       NumberPhone,
-      IDCard: hashedPassword,
+      IDCard,
       TypeCard,
       Image: imageUrl,
+      Password: hashedPassword,
     });
 
     res.status(200).json({

@@ -18,6 +18,7 @@ const customerSchema = new mongoose.Schema({
   IDCard: { type: String, required: true },
   TypeCard: { type: String, required: true },
   Image: { type: String, required: true },
+  Password: { type: String, required: true },
 });
 
 //Sổ đặt xe trước
