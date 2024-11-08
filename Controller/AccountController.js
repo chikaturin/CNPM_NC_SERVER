@@ -79,7 +79,7 @@ const signIn = async (req, res) => {
         return res.status(400).json({ message: "Tài khoản không hợp lệ" });
       }
 
-      isMatch = await bcrypt.compare(Password, account.IDCard);
+      isMatch = await bcrypt.compare(Password, account.Password);
       if (!isMatch) {
         return res.status(400).json({ message: "Mật khẩu không hợp lệ" });
       }
