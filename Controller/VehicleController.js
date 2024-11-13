@@ -161,7 +161,17 @@ const deleteVehicle = async (req, res) => {
 const Sort_Vehicle = async (req, res) => {
   try {
     const { Number_Seats } = req.params;
-    const vehicle = await VehicleDB.find({ Number_Seats });
+    const vehicle = await VehicleDB.aggregate([
+      { $match: { Number_Seats: parseInt(Number_Seats) } },
+      {
+        $lookup: {
+          from: "images",
+          localField: "_id",
+          foreignField: "Vehicle_ID",
+          as: "images",
+        },
+      },
+    ]);
     if (!vehicle) {
       return res
         .status(404)
