@@ -4,36 +4,35 @@ const { z } = require("zod");
 
 const createVehicle = async (req, res) => {
   const vehicleSchema = z.object({
-    _id: z.string().min(1, "Vehicle ID is required"),
-    Number_Seats: z.number().min(1, "Number_Seats must be greater than 0"),
-    Branch: z.string(),
-    Price: z.number().min(1, "Price must be greater than 0"),
-    Description: z.string(),
-    ImageVehicles: z.array(z.string()).optional(),
-    VehicleName: z.string(),
+    _id: z.coerce.string().min(1, "Vehicle ID is required"),
+    Number_Seats: z.coerce
+      .number()
+      .min(1, "Number_Seats must be greater than 0"),
+    Branch: z.coerce.string(),
+    Price: z.coerce.number().min(1, "Price must be greater than 0"),
+    Description: z.coerce.string(),
+    VehicleName: z.coerce.string(),
   });
 
   try {
+    console.log("Request Body:", req.body);
+
     const validateData = vehicleSchema.parse(req.body);
-    const {
-      _id,
-      Number_Seats,
-      Branch,
-      Price,
-      Description,
-      VehicleName,
-      ImageVehicles,
-    } = validateData;
+    const { _id, Number_Seats, Branch, Price, Description, VehicleName } =
+      validateData;
+
     const State = "Available";
     const CreateDate = new Date();
     const CreateBy = req.decoded._id;
 
-    for (const imgVehicle of ImageVehicles) {
+    const uploadedImages = [];
+    for (const file of req.files) {
       const newImage = await ImageDB.create({
         Vehicle_ID: _id,
-        ImageVehicle: imgVehicle,
+        ImageVehicle: file.path,
       });
       await newImage.save();
+      uploadedImages.push(newImage);
     }
 
     const vehicle = await VehicleDB.create({
@@ -49,9 +48,16 @@ const createVehicle = async (req, res) => {
     });
     await vehicle.save();
 
-    res.status(201).json({ message: "VehicleDB created successfully" });
+    res.status(201).json({
+      message: "VehicleDB created successfully",
+      uploadedImages,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Validation Error:", error.errors || error.message);
+    res.status(400).json({
+      message: "Validation Error",
+      details: error.errors || error.message,
+    });
   }
 };
 

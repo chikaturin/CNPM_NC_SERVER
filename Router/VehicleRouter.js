@@ -16,7 +16,10 @@ const {
 } = require("../Controller/VehicleController");
 const { checktoken } = require("../Middleware/check");
 
-router.post("/createVehicle", checktoken, createVehicle);
+const upload = multer(fileUpdate);
+const uploadImages = upload.array("images", 10);
+
+router.post("/createVehicle", checktoken, uploadImages, createVehicle);
 router.get("/getVehicleByCus", getVehicleByCus);
 router.get("/getVehicleByAdmin", getVehicleByAdmin);
 router.get("/DetailVehicle/:_id", getVehicleById);
