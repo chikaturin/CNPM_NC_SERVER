@@ -57,6 +57,11 @@ const PaymentContract = async (req, res) => {
     const return_Date = new Date(Return_Date);
     const pickup_Date = new Date(Pickup_Date);
 
+    const checkCus = await ContractDB.findOne({ MaKH, StatePay: "Staked" });
+    if (checkCus) {
+      return res.status(400).json({ message: "Customer has a contract" });
+    }
+
     const counterContract = await CounterContractDB.findOneAndUpdate(
       { _id: "Contract" },
       { $inc: { seq: 1 } },
