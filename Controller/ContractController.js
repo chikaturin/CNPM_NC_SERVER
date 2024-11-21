@@ -166,6 +166,16 @@ const GetContractById = async (req, res) => {
 const CompletedContract = async (req, res) => {
   try {
     const { _id } = req.params;
+    const checkcontract = await ContractDB.findOne({ _id });
+    if (!checkcontract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+    if (checkcontract.StatePay === "Paid") {
+      return res.status(400).json({ message: "Contract has been completed" });
+    }
+    if (checkcontract.Return_Date < new Date()) {
+      return res.status(400).json({ message: "Contract can't not has passed" });
+    }
     const contract = await ContractDB.findOneAndUpdate(
       { _id },
       { StatePay: "Paid" },
