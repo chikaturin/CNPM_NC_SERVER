@@ -31,6 +31,21 @@ const CreateDriver = async (req, res) => {
   }
 };
 
+const salary = async (req, res) => {
+  try {
+    const { _id } = req.params; //id driver
+    const { TotalDate } = req.body; // số ngày làm việc của 1 tháng
+    const findDriver = await DriverDB.findOne({ _id });
+    if (!findDriver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    const salary = findDriver.Price * TotalDate * 0.9;
+    res.status(200).json(salary);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 const GetDriverByAdmin = async (req, res) => {
   try {
     const driver = await DriverDB.find();
@@ -110,4 +125,5 @@ module.exports = {
   GetDriverById,
   UpdateDriver,
   DeleteDriver,
+  salary,
 };
