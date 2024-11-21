@@ -61,7 +61,7 @@ const dateReservation = async (req, res) => {
 
 const createVehicle_Reservation_Book = async (req, res) => {
   try {
-    const { Desired_Date, MaVehicle, Return_Date } = req.body;
+    const { Desired_Date, MaVehicle, Return_Date, Price } = req.body;
     const counter = await CounterReservation.findOneAndUpdate(
       { _id: "Reservation" },
       { $inc: { seq: 1 } },
@@ -132,6 +132,7 @@ const createVehicle_Reservation_Book = async (req, res) => {
       Desired_Date,
       MaVehicle,
       Return_Date,
+      Price,
     });
 
     res.status(200).json({

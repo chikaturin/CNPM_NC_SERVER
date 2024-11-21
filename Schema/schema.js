@@ -28,6 +28,7 @@ const ReservationSchema = new mongoose.Schema({
   Return_Date: { type: Date, required: true },
   MaKH: { type: String, required: true },
   MaVehicle: { type: String, required: true },
+  Price: { type: Number, required: true },
 });
 
 const VehicleSchema = new mongoose.Schema({
