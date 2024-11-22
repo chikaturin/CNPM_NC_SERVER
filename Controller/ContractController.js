@@ -244,7 +244,7 @@ const findContractDriver = async (req, res) => {
       }
     }
 
-    const driver = await DriverDB.findOne({ _id: MaDriver });
+    const driver = await DriverDB.findOne(MaDriver);
     if (!driver) {
       return res.status(404).json({ message: "Driver not found" });
     }
