@@ -9,6 +9,7 @@ const {
   GetContractById,
   CompletedContract,
   ContractByAdmin,
+  findContractDriver,
 } = require("../Controller/ContractController");
 
 const { checktoken } = require("../Middleware/check");
@@ -25,5 +26,7 @@ router.get(
 );
 router.get("/GetContractById/:_id", GetContractById);
 router.post("/CompletedContract/:_id", CompletedContract);
+
+router.get("/findContractDriver/:MaVehicle", findContractDriver);
 
 module.exports = router;

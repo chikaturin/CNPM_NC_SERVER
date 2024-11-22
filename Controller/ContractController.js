@@ -166,38 +166,97 @@ const GetContractById = async (req, res) => {
 const CompletedContract = async (req, res) => {
   try {
     const { _id } = req.params;
+
     const checkcontract = await ContractDB.findOne({ _id });
     if (!checkcontract) {
-      return res.status(404).json({ message: "Contract not found" });
+      console.log("Contract not found");
+      return res.status(403).json({ message: "Contract not found" });
     }
+
     if (checkcontract.StatePay === "Paid") {
-      return res.status(400).json({ message: "Contract has been completed" });
+      console.log("Contract has already been completed");
+      return res
+        .status(401)
+        .json({ message: "Contract has already been completed" });
     }
-    if (checkcontract.Return_Date < new Date()) {
-      return res.status(400).json({ message: "Contract can't not has passed" });
+
+    if (new Date(checkcontract.Return_Date) > new Date()) {
+      console.log("Contract return date cannot be completed");
+      return res
+        .status(402)
+        .json({ message: "Contract return date has passed" });
     }
+
     const contract = await ContractDB.findOneAndUpdate(
       { _id },
       { StatePay: "Paid" },
       { new: true }
     );
+
     const Vehicle = await VehicleDB.findOneAndUpdate(
       { _id: contract.MaVehicle },
       { State: "Available" },
       { new: true }
     );
+
     if (contract.MaDriver) {
-      const Driver = await DriverDB.findOneAndUpdate(
+      await DriverDB.findOneAndUpdate(
         { _id: contract.MaDriver },
         { StateDriver: "Available" },
         { new: true }
       );
-      await Driver.save();
     }
-    await Vehicle.save();
+
     res.status(200).json({ message: "Contract completed successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error completing contract:", error);
+    res.status(405).json({
+      message: "An error occurred while completing the contract",
+      error: error.message,
+    });
+  }
+};
+
+const findContractDriver = async (req, res) => {
+  try {
+    const { MaDriver } = req.params;
+    const checkcontract = await ContractDB.find({
+      MaDriver,
+    });
+    if (checkcontract.StatePay === "Staked") {
+      return res
+        .status(200)
+        .json({ message: "Driver has not completed contract" });
+    }
+
+    if (!checkcontract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    let Working_Date = 0;
+
+    for (const datecontract of checkcontract) {
+      if (datecontract.Pickup_Date && datecontract.Return_Date) {
+        const pickupDate = new Date(datecontract.Pickup_Date);
+        const returnDate = new Date(datecontract.Return_Date);
+        const days = (returnDate - pickupDate) / (1000 * 60 * 60 * 24);
+        Working_Date += Math.max(0, days);
+      }
+    }
+
+    const driver = await DriverDB.findOne({ _id: MaDriver });
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    const salary = Working_Date * driver.Price;
+
+    res.status(200).json({ salary });
+  } catch (error) {
+    console.error("Error finding contract driver:", error);
+    res.status(405).json({
+      message: "An error occurred while finding contract driver",
+      error: error.message,
+    });
   }
 };
 
@@ -209,4 +268,5 @@ module.exports = {
   GetContractById,
   CompletedContract,
   ContractByAdmin,
+  findContractDriver,
 };
